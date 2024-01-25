@@ -25,11 +25,11 @@ def main(file_path, yara_rules):
 
     # For each Yara match, find its PE section name
     for match in matches:
-        for string_data in match.strings:
-            offset, _, _ = string_data
-            rva = pe.get_rva_from_offset(offset)
-            section_name = find_pe_section_name(pe, rva)
-            print(f"Matched string at RVA {rva} is in section {section_name}")
+        for m in match.strings:
+            for i in m.instances:
+                rva = pe.get_rva_from_offset(i.offset)
+                section_name = find_pe_section_name(pe, rva)
+                print(f"Matched string ({match.rule}/{m.identifier}={i.matched_data})at RVA 0x{rva:02x} is in section {section_name}")
 
 if __name__ == "__main__":
     import sys
